@@ -93,7 +93,6 @@ const topDownChange = (ds, n) => {
 }
 
 // Tabularized - Bottom-up
-const changeTable = [];
 /* Change Table Structure
  * A matrix where each colum represents sections of ds:
  * ds -> [d0] [d0,d1] [d0,d1,d2] ... [d0...dm]
@@ -103,6 +102,7 @@ const changeTable = [];
 const bottomUpChange = (ds, n) => {
   // set up table with correct # of rows and columns
   // Fill in entries of n = 0 row with 1 (base cases)
+  const changeTable = new Array(n + 1).fill(0).map(e => [])
   changeTable[0] = new Array(ds.length).fill(1)
   for (let i = 1; i < n + 1; i++) {
     for (let j = 0; j < ds.length; j++) {
