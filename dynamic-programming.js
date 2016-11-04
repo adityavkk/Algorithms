@@ -121,3 +121,9 @@ const bottomUpChange = (ds, n) => {
   }
   return changeTable[n][ds.length - 1]
 }
+
+/* Though the bottom-up and top-down DP approaches look different, they are implimenting
+ * the same logic. However, it's easier to reason about the run time looking at the
+ * bottom-up approach. We can see that the run time for the algorithm is O(nm) where
+ * n is the target and m is the number of coin denominations we have.
+ **/
