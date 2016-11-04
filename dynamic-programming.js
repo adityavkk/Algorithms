@@ -24,15 +24,15 @@ const fib0 = (n) => {
 // Memoized - Top-down
 const fibMemo = {};
 const topDownFib = (n) => {
-  if (fibMemo[n]) return fibMemo[n];
-  let f;
-  if (n < 2) f = 1;
-  else f = topDownFib(n - 1) + topDownFib(n - 2)
-  fibMemo[n] = f;
-  return f;
-}
-// fib1 only recurses the first time it's called, for all n
-// There are only n memoized calls, and each memoized call does constant work.
+    if (fibMemo[n]) return fibMemo[n];
+    let f;
+    if (n < 2) f = 1;
+    else f = topDownFib(n - 1) + topDownFib(n - 2)
+    fibMemo[n] = f;
+    return f;
+  }
+  // fib1 only recurses the first time it's called, for all n
+  // There are only n memoized calls, and each memoized call does constant work.
 
 /***** In general, the time complexity of a DP algorithm can be calculated by
  ***** looking at # of subproblems * time per subproblem *****/
@@ -40,17 +40,17 @@ const topDownFib = (n) => {
 // Tabularized - Bottom-Up
 const fibTable = [];
 const bottomUpFib = (n) => {
-  for (let i = 0; i < n; i++) {
-    let f;
-    if (n < 2) f = 1;
-    else f = fibTable[i - 1] + fibTable[i - 2];
-    fibTable[i] = f;
+    for (let i = 0; i < n; i++) {
+      let f;
+      if (n < 2) f = 1;
+      else f = fibTable[i - 1] + fibTable[i - 2];
+      fibTable[i] = f;
+    }
+    return fibTable[n - 1];
   }
-  return fibTable[n - 1];
-}
-// Note: It's basically the same computation as the memoized fib, but there is no
-// recursion and the analysis is more obvious. It is one loop O(n) with O(1) work
-// in each iteration. Thus leading to O(n)
+  // Note: It's basically the same computation as the memoized fib, but there is no
+  // recursion and the analysis is more obvious. It is one loop O(n) with O(1) work
+  // in each iteration. Thus leading to O(n)
 
 /* Coin Change Problem
  * Given a list of coin denominations and a target, n, calculate the number of
@@ -66,16 +66,16 @@ const bottomUpFib = (n) => {
  */
 
 const changeNonDP = (ds, n) => {
-  // If n is 0 then we were able to make change from this branch, so return 1
-  if (n === 0) return 1;
-  // If n is less than 0 then no solution exists on this branch of the tree
-  if (n < 0) return 0;
-  // If there are no coins and n is greater than 0, then no solution exists
-  if (ds.length === 0 && n >= 1) return 0;
-  // Recurse
-  return changeNonDP(ds.slice(1), n) + changeNonDP(ds, n - ds[0]);
-}
-// Like the non-DP fibonacci this can set off lots of duplicate recursive calls
+    // If n is 0 then we were able to make change from this branch, so return 1
+    if (n === 0) return 1;
+    // If n is less than 0 then no solution exists on this branch of the tree
+    if (n < 0) return 0;
+    // If there are no coins and n is greater than 0, then no solution exists
+    if (ds.length === 0 && n >= 1) return 0;
+    // Recurse
+    return changeNonDP(ds.slice(1), n) + changeNonDP(ds, n - ds[0]);
+  }
+  // Like the non-DP fibonacci this can set off lots of duplicate recursive calls
 
 // Memoized - Top-down
 const coinMemo = {};
@@ -93,8 +93,8 @@ const topDownChange = (ds, n) => {
 }
 
 // Tabularized - Bottom-up
-const coinTable = [];
-/* Coin Table Structure
+const changeTable = [];
+/* Change Table Structure
  * A matrix where each colum represents sections of ds:
  * ds -> [d0] [d0,d1] [d0,d1,d2] ... [d0...dm]
  * Each row represents each k from 0 to n.
@@ -102,4 +102,19 @@ const coinTable = [];
  */
 const bottomUpChange = (ds, n) => {
   // set up table with correct # of rows and columns
+  // Fill in entries of n = 0 row with 1 (base cases)
+  changeTable[0] = new Array(ds.length).fill(1)
+  for (let i = 1; i < n + 1; i++) {
+    for (let j = 0; j < ds.length; j++) {
+      // retrieve the element from the table that corresponds to count with
+      // denomination ds[j] but where the target, i, is i - ds[j]
+      const w = i - ds[j] >= 0 ? changeTable[i - ds[j]][j] : 0;
+      // retrieve the element from the table that corrends to count without
+      // denomination ds[j] where the target, i, is the same i.e. element to the left
+      const wo = j >= 1 ? changeTable[i][j - 1] : 0;
+      // Total is with + without
+      changeTable[i][j] = w + wo
+    }
+  }
+  return changeTable[n][ds.length - 1]
 }
