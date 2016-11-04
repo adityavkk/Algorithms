@@ -11,6 +11,9 @@
  * There are typically two ways you can approach solving a problem using DP:
  * - Memoized or Top-Down
  * - Tabularized or Bottom-Up
+ *
+ * However, not all problems can be solved using DP. Problems that tend to have
+ * a significant number of repetitive sub-problems tend to be good candidates for DP.
  */
 
 // Fibonacci
