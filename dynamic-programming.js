@@ -127,7 +127,7 @@ const bottomUpChange = (ds, n) => {
  * n is the target and m is the number of coin denominations we have.
  **/
 
-/* Cake Thief
+/* Cake Thief - Knapsack Problem
  * You have an array of cakes, where each cake has a { weight, value }
  * and a bag with a capacity. Calculate the max value that can fit in the bag
  */
@@ -210,3 +210,32 @@ const topDownSteal = (cakes, capacity) => {
   cakeMemo[hash] = v;
   return v;
 }
+
+/* Robber Problem With Binary Tree
+ * You are a professional robber planning to rob houses along a street.
+ * The houses are arranged in a balanced, complete binary tree. Each house
+ * has a certain amount of money stashed, the only constraint stopping you from 
+ * robbing each of them is that adjacent houses have security system connected and 
+ * it will automatically contact the police if two adjacent houses were broken 
+ * into on the same night. Given a list of non-negative integers representing the 
+ * amount of money of each house, determine the maximum amount of money you can rob 
+ * tonight without alerting the police.
+ *
+ * Adjacent for a binary tree means that if you rob a house at node, p, its
+ * child nodes a and b are adjacent to p and cannot be robbed.
+ *
+ * FYI: Feel free to assume any implementation for the binary tree and that all
+ * values on the houses are non-negative.
+ * */
+
+const { houses } = require('./utils');
+/* house = { val: 200, l: AnotherHouse, r: AnotherHouse } */
+
+/* Non DP Solution
+ * Key Insight - The max value you can get by robbing the houses can be described
+ * as the max of current node value + rob(all other houses except for the immediate
+ * children of the current node) and rob(all other houses except the current node)
+ * i.e. the max between robbing this house and thus forgoing the ability to rob
+ * the immediate children vs. what you can get by forgoing the ability to rob this
+ * node.
+ * */
