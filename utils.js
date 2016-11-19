@@ -27,4 +27,23 @@ house.insert(25)
 house.insert(12)
 house.insert(25)
 
-module.exports = { house }
+class Q {
+  constructor() {
+    this.data = [];
+  }
+  enQ(v) {
+    if (v) this.data.push(v);
+  }
+  deQ() {
+    if (this.notMt()) return this.data.shift();
+    throw new Error('Cannot deQ from an empty Q');
+  }
+  notMt() {
+    return !!this.data.length;
+  }
+}
+
+module.exports = {
+  house,
+  Q
+}

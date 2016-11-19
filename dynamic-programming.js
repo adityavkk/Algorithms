@@ -271,3 +271,38 @@ const rob = h => {
  * T(n - 2) because we call rob on (n - 2) nodes (w/o immediate children)
  * T(n - 1) because we call rob on (n - 1) nodes (w/o current node)
  */
+
+const { Q } = require('./utils');
+
+// DP - Top-Down Approach
+const robberMemo = {};
+const assignHouseIds = h => {
+  // BFS through the BT and assign ids to each house to help us hash
+  let id = 1, q = new Q();
+  if (h.id) return h;
+  q.enQ(h)
+  while (q.notMt()) {
+    let node = q.deQ()
+    node.id = id;
+    id++;
+    q.enQ(node.l); // if null, enQ won't put it on the Q
+    q.enQ(node.r);
+  }
+  return h;
+}
+
+const robDP = h => {
+  h = assignHouseIds(h)
+  if (robberMemo[h.id]) return robberMemo[h.id];
+  let v, oneHouse = _oneHouse(h), threeHouses = _threeHouses(h);
+  if (h === null) v = 0;
+  else if (oneHouse) v = h.val;
+  else if (threeHouses) v = threeHouses;
+  else {
+    let withRoot = h.val + robDP(h.l.l) + robDP(h.l.r) + robDP(h.r.l) + robDP(h.r.r),
+      withoutRoot = robDP(h.l) + robDP(h.r);
+    v = Math.max(withRoot, withoutRoot);
+  }
+  robberMemo[h.id] = v;
+  return v;
+}
