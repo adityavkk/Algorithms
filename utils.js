@@ -19,12 +19,12 @@ class BTNode {
   }
 }
 
-const houses = new BTNode(5, null, null);
-houses.insert(10)
-houses.insert(1)
-houses.insert(100)
-houses.insert(3)
-houses.insert(8)
-houses.insert(5)
+const house = new BTNode(25, null, null);
+house.insert(100)
+house.insert(10)
+house.insert(15)
+house.insert(25)
+house.insert(12)
+house.insert(25)
 
-module.exports = { houses }
+module.exports = { house }

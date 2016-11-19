@@ -226,9 +226,10 @@ const topDownSteal = (cakes, capacity) => {
  *
  * FYI: Feel free to assume any implementation for the binary tree and that all
  * values on the houses are non-negative.
+ * See utils.js for a sample implementation.
  * */
 
-const { houses } = require('./utils');
+const { house } = require('./utils');
 /* house = { val: 200, l: AnotherHouse, r: AnotherHouse } */
 
 /* Non DP Solution
@@ -238,4 +239,35 @@ const { houses } = require('./utils');
  * i.e. the max between robbing this house and thus forgoing the ability to rob
  * the immediate children vs. what you can get by forgoing the ability to rob this
  * node.
+ *
+ * Base Cases:
+ * no houses => 0
+ * one house => house.val
+ * 3 node tree => max(root.val, ∑ childres.vals)
  * */
+
+const _oneHouse = h => h && h.l === null && h.r === null;
+const _threeHouses = h => h && _oneHouse(h.l) && _oneHouse(h.r) ?
+  Math.max(h.val, h.r.val + h.l.val) : false;
+
+const rob = h => {
+  let v, oneHouse = _oneHouse(h), threeHouses = _threeHouses(h);
+  if (h === null) v = 0;
+  else if (oneHouse) v = h.val;
+  else if (threeHouses) v = threeHouses;
+  else {
+    let withRoot = h.val + rob(h.l.l) + rob(h.l.r) + rob(h.r.l) + rob(h.r.r),
+      withoutRoot = rob(h.l) + rob(h.r);
+    v = Math.max(withRoot, withoutRoot);
+  }
+  return v;
+}
+
+/* As you might be able to deduce, the DP step involves caching the values for
+ * a given input to prevent recalculating previously calculated values.
+ * Currently the run time of our rob function is exponential, we might be able to
+ * reason about it by looking at the recurrence that characterizes the function
+ * T(n) = T(n - 2) + T(n - 1) <- which looks a lot like the fibonacci recurrance.
+ * T(n - 2) because we call rob on (n - 2) nodes (w/o immediate children)
+ * T(n - 1) because we call rob on (n - 1) nodes (w/o current node)
+ */
