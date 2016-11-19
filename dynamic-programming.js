@@ -121,9 +121,92 @@ const bottomUpChange = (ds, n) => {
   }
   return changeTable[n][ds.length - 1]
 }
-
 /* Though the bottom-up and top-down DP approaches look different, they are implimenting
  * the same logic. However, it's easier to reason about the run time looking at the
  * bottom-up approach. We can see that the run time for the algorithm is O(nm) where
  * n is the target and m is the number of coin denominations we have.
  **/
+
+/* Cake Thief
+ * You have an array of cakes, where each cake has a { weight, value }
+ * and a bag with a capacity. Calculate the max value that can fit in the bag
+ */
+const cakeTypes = [
+  {weight: 7, value: 160},
+  {weight: 3, value: 90},
+  {weight: 2, value: 15},
+], capacity = 20;
+
+// stealCakes(cakeTypes, 20) => 555 (6 cakes of weight 3 and one weight 2)
+
+// Non DP solution
+// Key insight - The max value you can get is the max of the values of stealing
+// one of the cakes, µ, + stealing all the cakes with capacity lowered by µ's weight
+// and the max value of stealing none of the cake, µ i.e. recurse on all cakes
+// except for µ with the same capacity.
+// In otherwords:
+// stealCakes(cakes, cap) =>
+// max(
+//  value of a cake (µ) + stealCakes(cakes, cap - µ.weight)
+// , stealCakes(cakes without µ, capacity)) considering base cases
+const _onlyOneFits = (cs, cap) => {
+  let fcs = cs.filter(c => c.weight <= cap);
+  return fcs.length === 1 ? fcs[0].value * Math.floor(fcs[0].weight/cap) : false;
+};
+const _allCakesLarger = (cs, cap) => cs.every(c => c.weight > cap);
+
+const stealCakes = (cakes, capacity) => {
+  let v = 0;
+  if (capacity <= 0) v = 0
+  else if (cakes.length) {
+    const onlyOneFits = _onlyOneFits(cakes, capacity),
+      allCakesLarger = _allCakesLarger(cakes, capacity);
+    if (allCakesLarger) v = 0;
+    else if (onlyOneFits) v = onlyOneFits;
+    else {
+      const c = cakes[0],
+        maxWith = c.value + stealCakes(cakes, capacity - c.weight),
+        maxWithout = stealCakes(cakes.slice(1), capacity);
+      v = Math.max(maxWith, maxWithout);
+    }
+  }
+  return v;
+}
+
+// Memoised - Top-Down
+const cakeMemo = {};
+const assignIds = cs => cs.map((c, i) => {
+  c.id = i;
+  return c;
+});
+// hashCakes :: ([Cake], Int) -> String
+const hashCakes = (cakes, capacity) => {
+  if (cakes.length && !cakes[0].id)
+    cakes = assignIds(cakes);
+  return cakes.reduce((hash, c, i) => {
+    hash = hash.concat(c.id);
+    if (i === cakes.length - 1) hash = hash.concat(';' + capacity);
+    return hash;
+  }, '')
+};
+const topDownSteal = (cakes, capacity) => {
+  const hash = hashCakes(cakes, capacity),
+    val = cakeMemo[hash];
+  if (val) return val;
+  let v = 0;
+  if (capacity <= 0) v = 0
+  else if (cakes.length) {
+    const onlyOneFits = _onlyOneFits(cakes, capacity),
+      allCakesLarger = _allCakesLarger(cakes, capacity);
+    if (allCakesLarger) v = 0;
+    else if (onlyOneFits) v = onlyOneFits;
+    else {
+      const c = cakes[0],
+        maxWith = c.value + topDownSteal(cakes, capacity - c.weight),
+        maxWithout = topDownSteal(cakes.slice(1), capacity);
+      v = Math.max(maxWith, maxWithout);
+    }
+  }
+  cakeMemo[hash] = v;
+  return v;
+}
