@@ -19,14 +19,14 @@
 // Fibonacci
 
 // Non-DP Approach (exponential time)
-const fib0 = (n) => {
+const fib0 = n => {
   if (n < 2) return 1;
   return fib0(n - 1) + fib0(n - 2)
 }
 
 // Memoized - Top-down
 const fibMemo = {};
-const topDownFib = (n) => {
+const topDownFib = n => {
     if (fibMemo[n]) return fibMemo[n];
     let f;
     if (n < 2) f = 1;
@@ -42,7 +42,7 @@ const topDownFib = (n) => {
 
 // Tabularized - Bottom-Up
 const fibTable = [];
-const bottomUpFib = (n) => {
+const bottomUpFib = n => {
     for (let i = 0; i < n; i++) {
       let f;
       if (n < 2) f = 1;
@@ -266,18 +266,18 @@ const rob = h => {
 /* As you might be able to deduce, the DP step involves caching the values for
  * a given input to prevent recalculating previously calculated values.
  * Currently the run time of our rob function is exponential, we might be able to
- * reason about it by looking at the recurrence that characterizes the function
+ * reason about it by looking at the recurrence that characterizes the algorithm
  * T(n) = T(n - 2) + T(n - 1) <- which looks a lot like the fibonacci recurrance.
  * T(n - 2) because we call rob on (n - 2) nodes (w/o immediate children)
  * T(n - 1) because we call rob on (n - 1) nodes (w/o current node)
  */
 
-const { Q } = require('./utils');
+const { Q } = require('./utils'); // Imports a fairly standard implementation of a queue
 
 // DP - Top-Down Approach
 const robberMemo = {};
 const assignHouseIds = h => {
-  // BFS through the BT and assign ids to each house to help us hash
+  // BFS through the BT and assign ids to each house to help us hash each house to a unique id
   let id = 1, q = new Q();
   if (h.id) return h;
   q.enQ(h)
